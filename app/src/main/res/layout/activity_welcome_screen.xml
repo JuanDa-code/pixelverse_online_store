@@ -16,7 +16,7 @@
         android:gravity="center">
 
         <com.airbnb.lottie.LottieAnimationView
-            app:lottie_fileName="Welcome_Animation.json"
+            app:lottie_fileName="Animation.json"
             app:lottie_imageAssetsFolder="assets"
             app:lottie_loop="true"
             app:lottie_autoPlay="true"
