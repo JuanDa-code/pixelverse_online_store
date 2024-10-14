@@ -21,7 +21,7 @@ class WelcomeScreenActivity : AppCompatActivity() {
             }
 
             override fun onFinish() {
-                startActivity(Intent(applicationContext, MainActivity::class.java))
+                startActivity(Intent(applicationContext, LoginActivity::class.java))
                 finishAffinity()
             }
 
