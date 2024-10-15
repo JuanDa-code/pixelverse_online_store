@@ -6,23 +6,22 @@ import android.widget.Button
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 
-class LoginActivity : AppCompatActivity() {
+class RegisterActivity : AppCompatActivity() {
     companion object{
-        const val CLASS_NAME = "com.pixelverse.onlinestore.LoginActivity"
+        const val CLASS_NAME = "com.pixelverse.onlinestore.RegisterActivity"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContentView(R.layout.activity_login)
+        setContentView(R.layout.activity_register)
 
-        val botonRegistrarse: Button = findViewById<Button>(R.id.button2)
+        val botonLogin: Button = findViewById<Button>(R.id.button2)
 
-        botonRegistrarse.setOnClickListener {
+        botonLogin.setOnClickListener {
             val intent = Intent(this, LoadingActivity::class.java)
-            intent.putExtra("NEXT_ACTIVITY", RegisterActivity.CLASS_NAME)
+            intent.putExtra("NEXT_ACTIVITY", LoginActivity.CLASS_NAME)
             startActivity(intent)
         }
     }
-
 }
