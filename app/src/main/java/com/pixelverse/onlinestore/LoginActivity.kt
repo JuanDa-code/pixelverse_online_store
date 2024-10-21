@@ -27,7 +27,7 @@ class LoginActivity : AppCompatActivity() {
 
         botonLogueo.setOnClickListener{
             val intent = Intent(this, LoadingActivity::class.java)
-            intent.putExtra("NEXT_ACTIVITY", ShoppingCartActivity.CLASS_NAME)
+            intent.putExtra("NEXT_ACTIVITY", ProductListActivity.CLASS_NAME)
             startActivity(intent)
         }
     }

@@ -32,7 +32,7 @@ class ShoppingCartActivity : AppCompatActivity() {
             Producto(1, "Audifonos Inalámbricos Mac", 100000, R.drawable.audifonos),
             Producto(2, "Producto 2", 150000, R.drawable.dron),
         )
-        adapter = ProductoAdapter(productos)
+        adapter = ProductoAdapter(productos, ProductoAdapter.ACCION_ELIMINAR)
         productosRecyclerView.adapter = adapter
         productosRecyclerView.layoutManager = LinearLayoutManager(this)
     }

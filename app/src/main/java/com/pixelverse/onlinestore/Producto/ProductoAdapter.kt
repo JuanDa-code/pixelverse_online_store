@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.pixelverse.onlinestore.R
 
-class ProductoAdapter(private val productos: List<Producto>) :
+class ProductoAdapter(private val productos: List<Producto>, private val tipoAccion: String) :
     RecyclerView.Adapter<ProductoAdapter.ProductoViewHolder>() {
 
     class ProductoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
@@ -22,6 +22,11 @@ class ProductoAdapter(private val productos: List<Producto>) :
         val tituloProducto: TextView = itemView.findViewById(R.id.tituloProducto)
         val precioProducto: TextView = itemView.findViewById(R.id.precioProducto)
         val eliminarButton: Button = itemView.findViewById(R.id.eliminarButton)
+    }
+
+    companion object {
+        const val ACCION_AGREGAR = "agregar"
+        const val ACCION_ELIMINAR = "eliminar"
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProductoViewHolder {
@@ -35,9 +40,19 @@ class ProductoAdapter(private val productos: List<Producto>) :
         holder.imagenProducto.setImageResource(producto.imagenUrl)
         holder.tituloProducto.text = producto.nombre
         holder.precioProducto.text = "$ ${producto.precio}"
-
-        holder.eliminarButton.setOnClickListener {
-
+        when (tipoAccion) {
+            ACCION_AGREGAR -> {
+                holder.eliminarButton.text = "Agregar"
+                holder.eliminarButton.setOnClickListener {
+                    // Lógica para agregar el producto al carrito
+                }
+            }
+            ACCION_ELIMINAR -> {
+                holder.eliminarButton.text = "Eliminar"
+                holder.eliminarButton.setOnClickListener {
+                    // Lógica para eliminar el producto del carrito
+                }
+            }
         }
     }
 
