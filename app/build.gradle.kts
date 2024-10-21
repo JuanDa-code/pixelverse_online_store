@@ -41,6 +41,8 @@ android {
 dependencies {
 
     implementation("org.jetbrains.kotlin:kotlin-script-runtime:1.8.22")
+    implementation("com.github.bumptech.glide:glide:4.15.1")
+    annotationProcessor("com.github.bumptech.glide:compiler:4.15.1")
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)

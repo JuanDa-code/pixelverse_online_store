@@ -16,11 +16,18 @@ class LoginActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_login)
 
+        val botonLogueo: Button = findViewById<Button>(R.id.button)
         val botonRegistrarse: Button = findViewById<Button>(R.id.button2)
 
         botonRegistrarse.setOnClickListener {
             val intent = Intent(this, LoadingActivity::class.java)
             intent.putExtra("NEXT_ACTIVITY", RegisterActivity.CLASS_NAME)
+            startActivity(intent)
+        }
+
+        botonLogueo.setOnClickListener{
+            val intent = Intent(this, LoadingActivity::class.java)
+            intent.putExtra("NEXT_ACTIVITY", ShoppingCartActivity.CLASS_NAME)
             startActivity(intent)
         }
     }
