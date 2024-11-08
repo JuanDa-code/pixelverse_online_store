@@ -1,5 +1,6 @@
 package com.pixelverse.onlinestore
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
@@ -22,7 +23,7 @@ class LoginActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_login)
 
-        val dbHelper = DbHelper(this)
+        dbHelper = DbHelper(this)
         val botonLogueo: Button = findViewById<Button>(R.id.button)
         val botonRegistrarse: Button = findViewById<Button>(R.id.button2)
         val usernameEditText = findViewById<EditText>(R.id.editTextText)
@@ -53,6 +54,14 @@ class LoginActivity : AppCompatActivity() {
                 if (cursor.moveToFirst()) {
                     val hashedPassword = cursor.getString(0)
                     if (BCrypt.checkpw(password, hashedPassword)) {
+                        val idUsuario = obtenerIdUsuario(username)
+
+                        val sharedPref = getSharedPreferences("mis_preferencias", Context.MODE_PRIVATE)
+                        with (sharedPref.edit()) {
+                            putString("id_usuario", idUsuario)
+                            apply()
+                        }
+
                         Toast.makeText(this, "Inicio de sesión exitoso", Toast.LENGTH_SHORT).show()
                         val intent = Intent(this, LoadingActivity::class.java)
                         intent.putExtra("NEXT_ACTIVITY", ProductListActivity.CLASS_NAME)
@@ -68,5 +77,17 @@ class LoginActivity : AppCompatActivity() {
                 Toast.makeText(this, "Por favor, complete todos los campos", Toast.LENGTH_SHORT).show()
             }
         }
+    }
+
+    private fun obtenerIdUsuario(username: String): String {
+        val db = dbHelper.readableDatabase
+        val cursor = db.rawQuery("SELECT ${DbHelper.COLUMN_ID} FROM ${DbHelper.TABLE_USUARIOS} WHERE ${DbHelper.COLUMN_USERNAME} = ?", arrayOf(username))
+
+        var idUsuario = ""
+        if (cursor.moveToFirst()) {
+            idUsuario = cursor.getString(cursor.getColumnIndexOrThrow(DbHelper.COLUMN_ID))
+        }
+        cursor.close()
+        return idUsuario
     }
 }

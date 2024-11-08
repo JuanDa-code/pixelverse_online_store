@@ -1,13 +1,14 @@
 package com.pixelverse.onlinestore
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.widget.ImageButton
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.pixelverse.onlinestore.Producto.Producto
+import com.pixelverse.onlinestore.Carrito.CarritoGlobal
 import com.pixelverse.onlinestore.Producto.ProductoAdapter
 
 @SuppressLint("WrongViewCast")
@@ -24,17 +25,26 @@ class ShoppingCartActivity : AppCompatActivity() {
         val backButton = findViewById<ImageButton>(R.id.ic_arrow_back)
 
         backButton.setOnClickListener {
-            finish()
+            val intent = Intent(this, LoadingActivity::class.java)
+            intent.putExtra("NEXT_ACTIVITY", ProductListActivity.CLASS_NAME)
+            startActivity(intent)
         }
 
         productosRecyclerView = findViewById(R.id.productosRecyclerView)
-        val productos: List<Producto> = listOf(
-            Producto(1, "Audifonos Inalámbricos Mac", 100000.123, ""),
-            Producto(2, "Producto 2", 150000.123, ""),
-        )
-        adapter = ProductoAdapter(productos, ProductoAdapter.ACCION_ELIMINAR)
+        val productos = CarritoGlobal.carrito.obtenerProductos()
+
+        adapter = ProductoAdapter(productos.toMutableList(), ProductoAdapter.ACCION_ELIMINAR) { productoEliminado ->
+            CarritoGlobal.carrito.eliminarProducto(productoEliminado)
+            recargarVistaCarrito()
+        }
+
         productosRecyclerView.adapter = adapter
         productosRecyclerView.layoutManager = LinearLayoutManager(this)
+    }
+
+    private fun recargarVistaCarrito() {
+        val productosActualizados = CarritoGlobal.carrito.obtenerProductos()
+        adapter.actualizarProductos(productosActualizados)
     }
 
     companion object {

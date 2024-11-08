@@ -1,6 +1,7 @@
 package com.pixelverse.onlinestore
 
 import android.content.ContentValues
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -13,6 +14,8 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.pixelverse.onlinestore.Carrito.Carrito
+import com.pixelverse.onlinestore.Carrito.CarritoGlobal
 import com.pixelverse.onlinestore.Producto.Producto
 import com.pixelverse.onlinestore.Producto.ProductoAdapter
 import com.pixelverse.onlinestore.db.DbHelper
@@ -22,6 +25,7 @@ class ProductListActivity : AppCompatActivity() {
     private lateinit var productosRecyclerView: RecyclerView
     private lateinit var adapter: ProductoAdapter
     private lateinit var dbHelper: DbHelper
+    private val carrito = Carrito()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,8 +36,8 @@ class ProductListActivity : AppCompatActivity() {
         dbHelper = DbHelper(this)
 
         productosRecyclerView = findViewById(R.id.productosRecyclerView)
-        val productos: List<Producto> = obtenerProductosDeLaBaseDeDatos()
-        adapter = ProductoAdapter(productos, ProductoAdapter.ACCION_AGREGAR)
+        val productos: MutableList<Producto> = obtenerProductosDeLaBaseDeDatos().toMutableList()
+        adapter = ProductoAdapter(productos, ProductoAdapter.ACCION_AGREGAR, {})
         productosRecyclerView.adapter = adapter
         productosRecyclerView.layoutManager = LinearLayoutManager(this)
 
@@ -66,13 +70,61 @@ class ProductListActivity : AppCompatActivity() {
 
                 agregarProducto(nombre, precio, imagenUrl)
 
-                val productos = obtenerProductosDeLaBaseDeDatos()
-                adapter = ProductoAdapter(productos, ProductoAdapter.ACCION_AGREGAR)
+                val productos = obtenerProductosDeLaBaseDeDatos().toMutableList()
+                adapter = ProductoAdapter(productos, ProductoAdapter.ACCION_AGREGAR, {})
                 productosRecyclerView.adapter = adapter
             }
             builder.setNegativeButton("Cancelar", null)
             builder.show()
         }
+
+        val sharedPref = getSharedPreferences("mis_preferencias", Context.MODE_PRIVATE)
+        val idUsuarioString = sharedPref.getString("id_usuario", "-1")
+        val idUsuario = idUsuarioString?.toIntOrNull() ?: -1
+
+        guardarCarritoEnLaBaseDeDatos(carrito, idUsuario)
+    }
+
+    private fun guardarCarritoEnLaBaseDeDatos(carrito: Carrito, idUsuario: Int) {
+        val db = dbHelper.writableDatabase
+        for (producto in carrito.obtenerProductos()) {
+            val values = ContentValues().apply {
+                put("id_usuario", idUsuario)
+                put("id_producto", producto.id)
+                put("cantidad", 1)
+            }
+            db.insert("carrito", null, values)
+        }
+    }
+
+    private fun obtenerCarritoDeLaBaseDeDatos(idUsuario: String): Carrito {
+        val db = dbHelper.readableDatabase
+        val cursor = db.rawQuery("SELECT * FROM carrito WHERE id_usuario = ?", arrayOf(idUsuario))
+        val carrito = Carrito()
+        while (cursor.moveToNext()) {
+            val idProducto = cursor.getInt(cursor.getColumnIndexOrThrow("id_producto"))
+            // ... (obtener la información del producto desde la base de datos o una API)
+            val producto = obtenerProductoPorId(idProducto)
+            if (producto != null) {
+                CarritoGlobal.carrito.agregarProducto(producto)
+            }
+        }
+        cursor.close()
+        return carrito
+    }
+
+    private fun obtenerProductoPorId(idProducto: Int): Producto? {
+        val db = dbHelper.readableDatabase
+        val cursor = db.rawQuery("SELECT * FROM ${DbHelper.TABLE_PRODUCTOS} WHERE ${DbHelper.COLUMN_ID_PRODUCTO} = ?", arrayOf(idProducto.toString()))
+        var producto: Producto? = null
+        if (cursor.moveToFirst()) {
+            val nombre = cursor.getString(cursor.getColumnIndexOrThrow(DbHelper.COLUMN_NOMBRE_PRODUCTO))
+            val precio = cursor.getDouble(cursor.getColumnIndexOrThrow(DbHelper.COLUMN_PRECIO))
+            val imagenUrl = cursor.getString(cursor.getColumnIndexOrThrow(DbHelper.COLUMN_IMAGEN_URL))
+            producto = Producto(idProducto, nombre, precio)
+        }
+        cursor.close()
+        return producto
     }
 
     private fun obtenerProductosDeLaBaseDeDatos(): List<Producto> {

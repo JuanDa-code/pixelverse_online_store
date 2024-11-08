@@ -6,22 +6,37 @@ import android.view.ViewGroup
 import android.widget.Button
 
 import android.widget.CheckBox
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.pixelverse.onlinestore.Carrito.CarritoGlobal
 import com.pixelverse.onlinestore.R
 
-class ProductoAdapter(private val productos: List<Producto>, private val tipoAccion: String) :
+class ProductoAdapter(private val productos: MutableList<Producto>, private val tipoAccion: String,  private val onEliminarProducto: (Producto) -> Unit) :
     RecyclerView.Adapter<ProductoAdapter.ProductoViewHolder>() {
 
-    class ProductoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
+    fun actualizarProductos(nuevosProductos: List<Producto>) {
+        productos.clear()
+        productos.addAll(nuevosProductos)
+        notifyDataSetChanged()
+    }
+
+    inner class ProductoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
     {
         val imagenProducto: ImageView = itemView.findViewById(R.id.imagenProducto)
         val checkboxProducto: CheckBox = itemView.findViewById(R.id.checkboxProducto)
         val tituloProducto: TextView = itemView.findViewById(R.id.tituloProducto)
         val precioProducto: TextView = itemView.findViewById(R.id.precioProducto)
         val eliminarButton: Button = itemView.findViewById(R.id.eliminarButton)
+
+        fun bind(producto: Producto) {
+            itemView.findViewById<ImageButton>(R.id.eliminarButton).setOnClickListener {
+                onEliminarProducto(producto)
+            }
+        }
     }
 
     companion object {
@@ -51,13 +66,15 @@ class ProductoAdapter(private val productos: List<Producto>, private val tipoAcc
             ACCION_AGREGAR -> {
                 holder.eliminarButton.text = "Agregar"
                 holder.eliminarButton.setOnClickListener {
-                    // Lógica para agregar el producto al carrito
+                    CarritoGlobal.carrito.agregarProducto(producto)
+                    Toast.makeText(holder.itemView.context, "Producto agregado al carrito", Toast.LENGTH_SHORT).show()
                 }
             }
             ACCION_ELIMINAR -> {
                 holder.eliminarButton.text = "Eliminar"
                 holder.eliminarButton.setOnClickListener {
-                    // Lógica para eliminar el producto del carrito
+                    CarritoGlobal.carrito.eliminarProducto(producto)
+                    Toast.makeText(holder.itemView.context, "Producto eliminado del carrito", Toast.LENGTH_SHORT).show()
                 }
             }
         }
