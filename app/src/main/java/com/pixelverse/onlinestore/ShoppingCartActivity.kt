@@ -29,8 +29,8 @@ class ShoppingCartActivity : AppCompatActivity() {
 
         productosRecyclerView = findViewById(R.id.productosRecyclerView)
         val productos: List<Producto> = listOf(
-            Producto(1, "Audifonos Inalámbricos Mac", 100000, R.drawable.audifonos),
-            Producto(2, "Producto 2", 150000, R.drawable.dron),
+            Producto(1, "Audifonos Inalámbricos Mac", 100000.123, ""),
+            Producto(2, "Producto 2", 150000.123, ""),
         )
         adapter = ProductoAdapter(productos, ProductoAdapter.ACCION_ELIMINAR)
         productosRecyclerView.adapter = adapter

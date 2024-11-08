@@ -37,7 +37,14 @@ class ProductoAdapter(private val productos: List<Producto>, private val tipoAcc
 
     override fun onBindViewHolder(holder: ProductoViewHolder, position: Int) {
         val producto = productos[position]
-        holder.imagenProducto.setImageResource(producto.imagenUrl)
+        Glide.with(holder.itemView.context)
+            .load(producto.imagenUrl)
+            .override(200, 200)
+            .placeholder(R.drawable.placeholder)
+            .centerCrop()
+            .error(R.drawable.error)
+            .into(holder.imagenProducto)
+
         holder.tituloProducto.text = producto.nombre
         holder.precioProducto.text = "$ ${producto.precio}"
         when (tipoAccion) {

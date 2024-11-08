@@ -1,10 +1,11 @@
 package com.pixelverse.onlinestore.Producto
 
+import androidx.room.PrimaryKey
 import com.pixelverse.onlinestore.R
 
 data class Producto(
-    val id: Int = 1,
-    val nombre: String = "Audifonos Inalámbricos Mac",
-    val precio: Int = 100000,
-    val imagenUrl: Int = R.drawable.audifonos
+    @PrimaryKey(autoGenerate = true) val id: Int = 0,
+    val nombre: String? = null,
+    val precio: Double? = null,
+    val imagenUrl: String? = null
 )

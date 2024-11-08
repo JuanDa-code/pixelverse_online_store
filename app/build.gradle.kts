@@ -43,6 +43,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-script-runtime:1.8.22")
     implementation("com.github.bumptech.glide:glide:4.15.1")
     implementation("org.mindrot:jbcrypt:0.4")
+    implementation(libs.androidx.room.common)
     annotationProcessor("com.github.bumptech.glide:compiler:4.15.1")
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
