@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
@@ -19,37 +20,34 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <CheckBox
-            android:id="@+id/checkboxProducto"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintStart_toEndOf="@id/imagenProducto"
-            app:layout_constraintTop_toTopOf="parent" />
-
         <TextView
             android:id="@+id/tituloProducto"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="32dp"
+            android:layout_marginEnd="84dp"
             android:text="Título del producto"
             android:textStyle="bold"
             app:layout_constraintEnd_toStartOf="@id/eliminarButton"
-            app:layout_constraintStart_toEndOf="@id/checkboxProducto"
+            app:layout_constraintStart_toEndOf="@+id/imagenProducto"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/precioProducto"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="12dp"
             android:text="$100"
-            app:layout_constraintStart_toEndOf="@id/checkboxProducto"
+            app:layout_constraintStart_toEndOf="@+id/imagenProducto"
             app:layout_constraintTop_toBottomOf="@id/tituloProducto" />
 
         <Button
             android:id="@+id/eliminarButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="44dp"
+            android:layout_marginEnd="32dp"
             android:text="Eliminar"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

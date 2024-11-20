@@ -23,13 +23,22 @@ class ProductoAdapter( private val productos: MutableList<Producto>, private val
         notifyDataSetChanged()
     }
 
-    inner class ProductoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
-    {
+    inner class ProductoViewHolder private constructor(itemView: View, tipoAccion: String) : RecyclerView.ViewHolder(itemView) {
+
         val imagenProducto: ImageView = itemView.findViewById(R.id.imagenProducto)
-        val checkboxProducto: CheckBox = itemView.findViewById(R.id.checkboxProducto)
         val tituloProducto: TextView = itemView.findViewById(R.id.tituloProducto)
         val precioProducto: TextView = itemView.findViewById(R.id.precioProducto)
         val eliminarButton: Button = itemView.findViewById(R.id.eliminarButton)
+
+        constructor(itemView: View) : this(itemView, ACCION_AGREGAR) {  }
+
+        constructor(itemView: View, cantidadProductoTextView: TextView, totalProductoTextView: TextView) : this(itemView, ACCION_ELIMINAR) {
+            this.cantidadProductoTextView = cantidadProductoTextView
+            this.totalProductoTextView = totalProductoTextView
+        }
+
+        lateinit var cantidadProductoTextView: TextView
+        lateinit var totalProductoTextView: TextView
     }
 
     companion object {
@@ -38,9 +47,21 @@ class ProductoAdapter( private val productos: MutableList<Producto>, private val
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProductoViewHolder {
-        val itemView = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_producto, parent, false)
-        return ProductoViewHolder(itemView)
+        return when (tipoAccion) {
+            ACCION_AGREGAR -> {
+                val itemView = LayoutInflater.from(parent.context)
+                    .inflate(R.layout.item_producto, parent, false)
+                ProductoViewHolder(itemView)
+            }
+            ACCION_ELIMINAR -> {
+                val itemView = LayoutInflater.from(parent.context)
+                    .inflate(R.layout.item_producto_carrito, parent, false)
+                val cantidadProductoTextView: TextView = itemView.findViewById(R.id.cantidadProductoTextView)
+                val totalProductoTextView: TextView = itemView.findViewById(R.id.totalProductoTextView)
+                ProductoViewHolder(itemView, cantidadProductoTextView, totalProductoTextView)
+            }
+            else -> throw IllegalArgumentException("Tipo de acción inválido")
+        }
     }
 
     override fun onBindViewHolder(holder: ProductoViewHolder, position: Int) {
@@ -61,14 +82,25 @@ class ProductoAdapter( private val productos: MutableList<Producto>, private val
                 holder.eliminarButton.text = "Agregar"
                 holder.eliminarButton.setOnClickListener {
                     onAgregarProducto(producto, this.idUsuario)
-                    Toast.makeText(holder.itemView.context, "Producto agregado al carrito", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        holder.itemView.context,
+                        "Producto agregado al carrito",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
             ACCION_ELIMINAR -> {
+                holder.cantidadProductoTextView.text = "Cantidad: ${producto.cantidad}"
+                val totalProducto = producto.precio!! * producto.cantidad
+                holder.totalProductoTextView.text = "Total: $ ${String.format("%.2f", totalProducto)}"
                 holder.eliminarButton.text = "Eliminar"
                 holder.eliminarButton.setOnClickListener {
                     onEliminarProducto(producto)
-                    Toast.makeText(holder.itemView.context, "Producto eliminado del carrito", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        holder.itemView.context,
+                        "Producto eliminado del carrito",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
         }

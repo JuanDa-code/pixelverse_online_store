@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.ImageButton
+import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -33,9 +34,9 @@ class ShoppingCartActivity : AppCompatActivity() {
         val backButton = findViewById<ImageButton>(R.id.ic_arrow_back)
 
         backButton.setOnClickListener {
-            val intent = Intent(this, LoadingActivity::class.java)
-            intent.putExtra("NEXT_ACTIVITY", ProductListActivity.CLASS_NAME)
+            val intent = Intent(this, ProductListActivity::class.java)
             startActivity(intent)
+            finish()
         }
 
         productosRecyclerView = findViewById(R.id.productosRecyclerView)
@@ -61,6 +62,12 @@ class ShoppingCartActivity : AppCompatActivity() {
 
         productosRecyclerView.adapter = adapter
         productosRecyclerView.layoutManager = LinearLayoutManager(this)
+
+        val totalProductos = calcularTotalProductos(productos)
+
+        val totalTextView = findViewById<TextView>(R.id.textView8)
+
+        totalTextView.text = "$ ${String.format("%.2f", totalProductos)}"
     }
 
     private fun recargarVistaCarrito() {
@@ -73,10 +80,11 @@ class ShoppingCartActivity : AppCompatActivity() {
     private fun obtenerCarritoDeLaBaseDeDatos(idUsuario: String): List<Producto> {
         val db = dbHelper.readableDatabase
         val cursor = db.rawQuery(
-            "SELECT P.${DbHelper.COLUMN_ID_PRODUCTO}, P.${DbHelper.COLUMN_NOMBRE_PRODUCTO}, P.${DbHelper.COLUMN_PRECIO}, P.${DbHelper.COLUMN_IMAGEN_URL} " +
+            "SELECT P.${DbHelper.COLUMN_ID_PRODUCTO}, P.${DbHelper.COLUMN_NOMBRE_PRODUCTO}, P.${DbHelper.COLUMN_PRECIO}, P.${DbHelper.COLUMN_IMAGEN_URL}, SUM(C.${DbHelper.COLUMN_CANTIDAD}) AS cantidad " +
                     "FROM ${DbHelper.TABLE_PRODUCTOS} P " +
-                    "INNER JOIN t_carrito C ON P.${DbHelper.COLUMN_ID_PRODUCTO} = C.id_producto " +
-                    "WHERE C.id_usuario = ?",
+                    "INNER JOIN ${DbHelper.TABLE_CARRITO} C ON P.${DbHelper.COLUMN_ID_PRODUCTO} = C.${DbHelper.COLUMN_ID_PRODUCTO} " +
+                    "WHERE C.${DbHelper.COLUMN_ID_USUARIO} = ? " +
+                    "GROUP BY P.${DbHelper.COLUMN_ID_PRODUCTO}",
             arrayOf(idUsuario)
         )
         val carrito = mutableListOf<Producto>()
@@ -85,7 +93,8 @@ class ShoppingCartActivity : AppCompatActivity() {
             val nombre = cursor.getString(cursor.getColumnIndexOrThrow(DbHelper.COLUMN_NOMBRE_PRODUCTO))
             val precio = cursor.getDouble(cursor.getColumnIndexOrThrow(DbHelper.COLUMN_PRECIO))
             val imagenUrl = cursor.getString(cursor.getColumnIndexOrThrow(DbHelper.COLUMN_IMAGEN_URL))
-            val producto = Producto(idProducto, nombre, precio, imagenUrl)
+            val cantidad = cursor.getInt(cursor.getColumnIndexOrThrow("cantidad"))
+            val producto = Producto(idProducto, nombre, precio, imagenUrl, cantidad)
             carrito.add(producto)
         }
         cursor.close()
@@ -94,7 +103,37 @@ class ShoppingCartActivity : AppCompatActivity() {
 
     fun eliminarProductoDelCarrito(idProducto: Int, idUsuario: Int) {
         val db = dbHelper.writableDatabase
-        db.delete(DbHelper.TABLE_CARRITO, "${DbHelper.COLUMN_ID_PRODUCTO} = ? AND ${DbHelper.COLUMN_ID_USUARIO} = ?", arrayOf(idProducto.toString(), idUsuario.toString()))
+
+        val cursor = db.query(
+            DbHelper.TABLE_CARRITO,
+            arrayOf(DbHelper.COLUMN_ID_CARRITO),
+            "${DbHelper.COLUMN_ID_PRODUCTO} = ? AND ${DbHelper.COLUMN_ID_USUARIO} = ?",
+            arrayOf(idProducto.toString(), idUsuario.toString()),
+            null,
+            null,
+            null,
+            "1"
+        )
+
+        if (cursor.moveToFirst()) {
+            val idCarrito = cursor.getInt(cursor.getColumnIndexOrThrow(DbHelper.COLUMN_ID_CARRITO))
+
+            db.delete(
+                DbHelper.TABLE_CARRITO,
+                "${DbHelper.COLUMN_ID_CARRITO} = ?",
+                arrayOf(idCarrito.toString())
+            )
+        }
+
+        cursor.close()
+    }
+
+    private fun calcularTotalProductos(productos: List<Producto>): Double {
+        var total = 0.0
+        for (producto in productos) {
+            total += producto.precio ?: 0.0 * producto.cantidad
+        }
+        return total
     }
 
     companion object {
