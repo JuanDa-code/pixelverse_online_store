@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "203111225372",
+    "firebase_url": "https://pixelverse-store-default-rtdb.firebaseio.com",
+    "project_id": "pixelverse-store",
+    "storage_bucket": "pixelverse-store.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:203111225372:android:a2900fd94e1587733be7d9",
+        "android_client_info": {
+          "package_name": "com.pixelverse.onlinestore"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAOp-zK2TdTCrV6FlVf4ZvLTpbADtGlItg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

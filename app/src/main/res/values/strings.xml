@@ -22,4 +22,5 @@
     <string name="menu_home">Home</string>
     <string name="menu_gallery">Gallery</string>
     <string name="menu_slideshow">Slideshow</string>
+    <string name="DEFAULT_CLIENT">1:203111225372:android:a2900fd94e1587733be7d9</string>
 </resources>

@@ -1,5 +1,6 @@
 package com.pixelverse.onlinestore.Producto
 
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -68,7 +69,7 @@ class ProductoAdapter( private val productos: MutableList<Producto>, private val
         val producto = productos[position]
 
         Glide.with(holder.itemView.context)
-            .load(producto.imagenUrl)
+            .load(if (producto.imagenUrl != null) Uri.parse(producto.imagenUrl) else R.drawable.placeholder)
             .override(200, 200)
             .placeholder(R.drawable.placeholder)
             .centerCrop()

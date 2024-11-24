@@ -9,8 +9,11 @@ import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
-
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.SupportMapFragment
 import com.pixelverse.onlinestore.Producto.Producto
 import com.pixelverse.onlinestore.Producto.ProductoAdapter
 import com.pixelverse.onlinestore.db.DbHelper
@@ -21,13 +24,15 @@ class ShoppingCartActivity : AppCompatActivity() {
     private lateinit var productosRecyclerView: RecyclerView
     private lateinit var adapter: ProductoAdapter
     private lateinit var dbHelper: DbHelper
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private lateinit var mapFragment: SupportMapFragment
+    private var googleMap: GoogleMap? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         enableEdgeToEdge()
         setContentView(R.layout.activity_shopping_cart)
-
 
         dbHelper = DbHelper(this)
 
@@ -68,6 +73,9 @@ class ShoppingCartActivity : AppCompatActivity() {
         val totalTextView = findViewById<TextView>(R.id.textView8)
 
         totalTextView.text = "$ ${String.format("%.2f", totalProductos)}"
+
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+
     }
 
     private fun recargarVistaCarrito() {

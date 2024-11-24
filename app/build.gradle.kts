@@ -40,10 +40,15 @@ android {
 
 dependencies {
 
+    implementation("com.google.firebase:firebase-bom:32.3.1")
+    implementation("com.google.firebase:firebase-auth-ktx:23.1.0")
+    implementation("com.google.android.gms:play-services-auth:20.7.0")
     implementation("org.jetbrains.kotlin:kotlin-script-runtime:1.8.22")
     implementation("com.github.bumptech.glide:glide:4.15.1")
     implementation("org.mindrot:jbcrypt:0.4")
+    implementation("com.google.android.gms:play-services-maps:18.1.0")
     implementation(libs.androidx.room.common)
+    implementation(libs.play.services.location)
     annotationProcessor("com.github.bumptech.glide:compiler:4.15.1")
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
@@ -61,3 +66,5 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 }
+
+apply(plugin = "com.google.gms.google-services")

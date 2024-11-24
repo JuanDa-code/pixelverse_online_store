@@ -26,4 +26,16 @@
         android:hint="URL de la imagen"
         android:inputType="textUri" />
 
+    <ImageView
+        android:id="@+id/imagenProductoImageView"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:src="@drawable/placeholder" />
+
+    <Button
+        android:id="@+id/agregarImagenButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Agregar Imagen" />
+
 </LinearLayout>
